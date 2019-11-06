@@ -22,15 +22,17 @@ public class Classroom {
 
     public double averageScore() {
 
-        double sum = 0;
+       /* double sum = 0;
         int cpt = 0;
         for (Student student : students) {
             for (Map.Entry<String, Integer> courses : student.getScoreByCourse().entrySet()) {
                 sum += courses.getValue();
                 cpt++;
             }
-        }
-        return (sum / cpt);
+        }*/
+        //return (sum / cpt);
+        return students.stream().flatMapToInt(student -> student.getScoreByCourse().values().stream().mapToInt(Integer::intValue))
+                .average().orElse(0.0);
     }
 
     public int countStudents() {
@@ -51,7 +53,7 @@ public class Classroom {
 
     public List<Student> successfulStudents() {
 
-        Set<Student> studentSet = new TreeSet<>(
+        /*Set<Student> studentSet = new TreeSet<>(
                 Comparator.comparingDouble(student -> -student.averageScore()));
 
         for (Student s : students) {
@@ -62,8 +64,9 @@ public class Classroom {
 
         List<Student> studentList = new ArrayList<>();
         for (Student s : studentSet)
-            studentList.add(s);
-        return studentList;
+            studentList.add(s);*/
+        return students.stream().filter(Student::isSuccessful)
+                .sorted(Comparator.comparingDouble(student->-student.averageScore())).collect(Collectors.toList());
 
     }
 }
